@@ -1,0 +1,44 @@
+# Python bytecode and caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyd
+*.py.class
+
+# Build / distribution artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE / editor folders
+.vscode/
+.idea/
+*.code-workspace
+.pytest_cache/
+.mypy_cache/
+
+# Test coverage / reports
+.coverage
+htmlcov/
+
+# Local app state
+.cache/
+.tokens/
+out/
+logs/
+
+# Secrets / credentials
+.env
+client_secret.json
+
+# OS artifacts
+.DS_Store
+Thumbs.db
