@@ -41,16 +41,18 @@
 ## Architecture Overview
 
 ```
+
 synclify/
-©À©¤©¤ cli.py              # Top-level CLI dispatcher
-©À©¤©¤ manager.py          # High-level playlist management (add/remove/report)
-©À©¤©¤ adapters_impl.py    # Spotify and YouTube adapters implementing common protocol
-©À©¤©¤ services/           # Thin wrappers around external APIs
-©À©¤©¤ utils.py            # Normalisation helpers and duplicate detection utilities
-©À©¤©¤ retry.py            # Shared exponential backoff logic
-©À©¤©¤ state.py            # Runtime state shared across modules
-©¸©¤©¤ legacy_sync.py      # Original sync workflow (kept for compatibility)
-```
+â”œâ”€â”€ cli.py              # Top-level CLI dispatcher
+â”œâ”€â”€ manager.py          # High-level playlist management (add/remove/report)
+â”œâ”€â”€ adapters_impl.py    # Spotify and YouTube adapters implementing common protocol
+â”œâ”€â”€ services/           # Thin wrappers around external APIs
+â”œâ”€â”€ utils.py            # Normalisation helpers and duplicate detection utilities
+â”œâ”€â”€ retry.py            # Shared exponential backoff logic
+â”œâ”€â”€ state.py            # Runtime state shared across modules
+â””â”€â”€ legacy_sync.py      # Original sync workflow (kept for compatibility)
+
+````
 
 - **Adapters** separate product-specific details from generic playlist operations.
 - **Services** handle API calls, authentication, and rate-limit aware retries.
@@ -82,7 +84,7 @@ python -m venv .venv
 
 # Install dependencies
 pip install -r requirements.txt
-```
+````
 
 Dependencies are pinned in `requirements.txt` for reproducibility:
 
@@ -107,7 +109,8 @@ Synclify uses OAuth2 for both Spotify and Google. You only need to configure eac
 
 1. Log into the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
 2. Create a **new app**. Give it a name such as `Synclify Local`.
-3. In *Settings ¡ú Redirect URIs*, add:
+3. In *Settings â†’ Redirect URIs*, add:
+
    ```
    http://127.0.0.1:8000/callback
    ```
@@ -117,9 +120,9 @@ Synclify uses OAuth2 for both Spotify and Google. You only need to configure eac
 ### Google / YouTube OAuth App
 
 1. Open the [Google Cloud Console](https://console.cloud.google.com/), create a project (for example `Synclify`).
-2. Navigate to **APIs & Services ¡ú Library** and enable **YouTube Data API v3**.
-3. Under **APIs & Services ¡ú OAuth consent screen**, configure an internal or external consent screen. Add your Google account as a test user.
-4. Go to **Credentials ¡ú Create credentials ¡ú OAuth client ID**, choose **Desktop App**.
+2. Navigate to **APIs & Services â†’ Library** and enable **YouTube Data API v3**.
+3. Under **APIs & Services â†’ OAuth consent screen**, configure an internal or external consent screen. Add your Google account as a test user.
+4. Go to **Credentials â†’ Create credentials â†’ OAuth client ID**, choose **Desktop App**.
 5. Download the resulting `client_secret.json` file and place it at the project root. (This file is ignored by Git via `.gitignore`.)
 
 ---
@@ -161,9 +164,9 @@ Synclify
 Select an option:
 ```
 
-- **Manage Spotify playlists:** add tracks, remove duplicates, or bulk-remove by artist.
-- **Manage YouTube playlists:** same actions, using the web search fallback when API results are missing.
-- **Legacy sync mode:** run the original add-only sync workflow maintained in `synclify/legacy_sync.py`.
+* **Manage Spotify playlists:** add tracks, remove duplicates, or bulk-remove by artist.
+* **Manage YouTube playlists:** same actions, using the web search fallback when API results are missing.
+* **Legacy sync mode:** run the original add-only sync workflow maintained in `synclify/legacy_sync.py`.
 
 During the first run Synclify opens browser windows for Spotify and Google to complete OAuth consent. Tokens are cached in `.tokens/` for subsequent runs.
 
@@ -181,29 +184,29 @@ This keeps the original prompt flow in place (compare source/destination playlis
 
 ## Project Structure
 
-| Path                          | Description                                                     |
-|------------------------------|-----------------------------------------------------------------|
-| `sync_playlist.py`           | Entrypoint; forwards to the interactive CLI                     |
-| `synclify/cli.py`            | Menu controller                                                  |
-| `synclify/manager.py`        | Playlist orchestration (artist summaries, add/remove, dedupe)   |
-| `synclify/services/`         | Spotify / YouTube service layers with OAuth + retry logic       |
-| `synclify/adapters_impl.py`  | Adapter implementations bridging services and manager           |
-| `synclify/utils.py`          | Title/artist normalisation, dedupe helpers, parsing functions   |
-| `synclify/websearch.py`      | Google web scraping fallback for YouTube Music                  |
-| `synclify/state.py`          | Shared runtime state (quota flags, plan mode, caches)           |
-| `synclify/legacy_sync.py`    | Original one-way sync script preserved for compatibility        |
+| Path                        | Description                                                   |
+| --------------------------- | ------------------------------------------------------------- |
+| `sync_playlist.py`          | Entrypoint; forwards to the interactive CLI                   |
+| `synclify/cli.py`           | Menu controller                                               |
+| `synclify/manager.py`       | Playlist orchestration (artist summaries, add/remove, dedupe) |
+| `synclify/services/`        | Spotify / YouTube service layers with OAuth + retry logic     |
+| `synclify/adapters_impl.py` | Adapter implementations bridging services and manager         |
+| `synclify/utils.py`         | Title/artist normalisation, dedupe helpers, parsing functions |
+| `synclify/websearch.py`     | Google web scraping fallback for YouTube Music                |
+| `synclify/state.py`         | Shared runtime state (quota flags, plan mode, caches)         |
+| `synclify/legacy_sync.py`   | Original one-way sync script preserved for compatibility      |
 
 ---
 
 ## Troubleshooting
 
-| Problem / Symptom                                      | Suggested Fix |
-|--------------------------------------------------------|---------------|
-| `SpotifyException: 403` when listing playlists         | Ensure your Spotify app added your user under ¡°Users and Access¡±, and that the redirect URI matches exactly. Delete `.tokens/spotify_token.json` and retry. |
-| YouTube quota exhausted (HTTP 403 `quotaExceeded`)     | Switch to planning mode or wait until the daily quota resets (YouTube API quota is 10,000 units/day). |
-| Google CAPTCHA during web search                       | A browser window will open; solve the CAPTCHA and press ENTER to retry. |
-| Duplicate removal does nothing                         | Ensure the similarity threshold (default 0.90) is appropriate for your playlist. |
-| CLI exits with `client_secret.json` missing            | Make sure the file is downloaded from Google Cloud and placed beside `sync_playlist.py`. |
+| Problem / Symptom                                  | Suggested Fix                                                                                                                                               |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SpotifyException: 403` when listing playlists     | Ensure your Spotify app added your user under *Users and Access*, and that the redirect URI matches exactly. Delete `.tokens/spotify_token.json` and retry. |
+| YouTube quota exhausted (HTTP 403 `quotaExceeded`) | Switch to planning mode or wait until the daily quota resets (YouTube API quota is 10,000 units/day).                                                       |
+| Google CAPTCHA during web search                   | A browser window will open; solve the CAPTCHA and press ENTER to retry.                                                                                     |
+| Duplicate removal does nothing                     | Ensure the similarity threshold (default 0.90) is appropriate for your playlist.                                                                            |
+| CLI exits with `client_secret.json` missing        | Make sure the file is downloaded from Google Cloud and placed beside `sync_playlist.py`.                                                                    |
 
 Logs with `[yellow]` messages are warnings; `[red]` indicates an error that stops the current action; `[green]` confirms success.
 
@@ -226,4 +229,6 @@ This project is available under the **MIT License**. When publishing to GitHub, 
 
 ---
 
-Happy syncing! Feel free to share your fork or improvements¡ªeveryone can use Synclify under their own credentials.
+Happy syncing! Feel free to share your fork or improvementsâ€”everyone can use Synclify under their own credentials.
+
+```
